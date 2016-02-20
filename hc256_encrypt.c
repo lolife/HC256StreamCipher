@@ -9,40 +9,30 @@
 int main( int argc, char* argv[] ) {
     uint32 keystream[16]; // the random keystream
     uint32 i;
-	uint32	*msg,
-			c[16];
-	char*	mys;
+	uint32	c[16];
 	static uint32 key[8] = {'M','I','C','H','A','E','L','1'};
 	static uint32 iv[8]  = {'1','8','6','7','5','3','0','9'};
-	const char * plaintext = "Cordially convinced did incommode existence put out suffering certainly. Besides another and saw ferrars limited ten say unknown. On at tolerably depending do perceived. Luckily eat joy see own shyness minuter. So before remark at depart. Did son unreserved themselves indulgence its. Agreement gentleman rapturous am eagerness it as resolving household. Direct wicket little of talked lasted formed or it. Sweetness consulted may prevailed for bed out sincerity. M.";
+	uint32 *msg = malloc( sizeof(uint32) * 64 );
+	char *mys = calloc( 4096, sizeof(char) );
 
-	msg = malloc( 64 );
-	mys = malloc( 8*strlen(plaintext) );
-	sprintf( mys, "%s", plaintext );
+    FILE *infile = fopen( argv[1], "r" );
+    if( infile == NULL ) {          
+        printf( "Error: Could not open file %s.\n", argv[1] );
+        return(1);
+    }       
 
-//	uint32 *data = malloc( sizeof( uint32 ) * 4096 );
+    int n=0;    
+    while( !feof( infile) && n < 4096 ) {
+		mys[n] = fgetc( infile );
+        ++n;
+    } 
+    fclose( infile );
 
-//    FILE *infile = fopen( argv[1], "r" );
-//    if( infile == NULL ) {          
-//        printf( "Error: Could not open file %s.\n", argv[1] );
-//        return(1);
-//    }       
-//    int n=0;    
-//    while( !feof( infile) && n < 4096 ) {
-//		data[n] = malloc( sizeof( unsigned long ) );
- //       fscanf( infile, "%03i %03i %03i %03i ", &data[n] );
-//        ++n;
-//    } 
-//    fclose( infile );
-//	--n;
-
-//	printf( "%i records. First number is %li\n", n, data[0] );
+//	printf( "Got %i characters.\n", n );
+//	printf( "plaintext:\n====\n%s\n====\n", mys );
 
     //key and iv setup
     initialization(key,iv);
-
-//	for (i = 0; i < strlen(&mys[0]); i++) { printf( "%c", mys[i] ); }
-//	printf( "\n" );
 
 	int bits = strlen( &mys[0] ) * 8;
 	int t=0;
@@ -54,27 +44,12 @@ int main( int argc, char* argv[] ) {
     	//generate and print the first 512-bit keystream
     	for (i = 0; i < 16; i++) { keystream[i]=0; }
 		encrypt(keystream);
-//		printf( "\nCiphertext is:\n" );
 		for (i = 0; i < 16; i++) {
 			c[i] = msg[i] ^ keystream[i];
-			printf( "%li ", c[i] );
+			printf( "%u ", c[i] );
 		}
-//			uint32 val = c[i];
-//			for( int l = 0; l < 4; l+=1 ) {
-//				;
-//				printf( "%03i ",  val >> l*8 & 0XFF );
-//			}
-//		}
-
-//		printf( "\nPlaintext is:\n" );
-//   	for (i = 0; i < 16; i++) {
-//			uint32 val = c[i] ^ keystream[i];
-//			for( int l = 0; l < 4; l+=1 ) {
-//				printf( "%c",  (val >> l*8 & 0XFF ) );
-//			}
-//			printf( "\n" );
-//		}
 		t+=1;
 	}
+	printf( "\n" );
 	return (0);
 }

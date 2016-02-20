@@ -2,3 +2,5 @@
 hc256_decrypt
 
 hc256_encrypt
+
+*.txt
