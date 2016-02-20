@@ -24,14 +24,13 @@ int main( int argc, char* argv[] ) {
 
     int n=0;    
     while( !feof( infile) && n < 4096 ) {
-		data[n] = malloc( sizeof( uint32 ) );
-        fscanf( infile, "%li ", &data[n] );
+        fscanf( infile, "%u ", &data[n] );
         ++n;
     } 
     fclose( infile );
 //	--n;
 
-	printf( "%i records. First number is %li\n", n, data[0] );
+	printf( "%i records. First number is %u\n", n, data[0] );
 
     //key and iv setup
     initialization(key,iv);
@@ -40,17 +39,15 @@ int main( int argc, char* argv[] ) {
     	//generate and print the first 512-bit keystream
     	for (i = 0; i < 16; i++) { keystream[i]=0; }
 		encrypt(keystream);
-//		printf( "\nCiphertext is:\n" );
 		for (i = 0; i < 16; i++) {
 			c[i] = data[(counter*16)+i];
-//			printf( "\nPlaintext is:\n" );
 			uint32 val = c[i] ^ keystream[i];
 			for( int l = 0; l < 4; l+=1 ) {
 				;
 				printf( "%c", (val >> l*8 & 0XFF ) );
 			}
 		}
-		printf( "\n" );
+//		printf( "\n" );
 	}
 	printf( "\n" );
 	return (0);
